@@ -10,7 +10,27 @@ function PersonService () {
 			method: "post",
 			data: data,
 			success: function(data) {
-				callback(data);
+				// callback(data);
+				console.log("added person");
+			}
+		});
+	};
+
+	this.deleteId = function (id){
+		$.ajax(baseUrl + "/people/" + id, {
+			method: "delete",
+			success: function() {
+				console.log("deleted");
+			}
+		});
+	};
+
+	this.editId = function (data){
+		$.ajax(baseUrl + "/people/",{
+			method: "put",
+			data:data,
+			success: function() {
+				console.log("updated");
 			}
 		});
 	};
@@ -24,6 +44,19 @@ function PersonService () {
 			}
 		});
 	};
+	
+	this.populate = function (firstName){
+    $.ajax(baseUrl + "/people/" + firstName , {
+    	method : 'POST',
+    	success: function (response) {
+        	var trHTML = '';
+        	$.each(response, function (i, item) {
+            	trHTML += '<tr><td>' + item.firstName + '</td></tr>';
+        	});
+        	$('#records_table').append(trHTML);
+    
+}});
+};
 
 	//getAll
 
