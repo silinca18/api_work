@@ -1,35 +1,79 @@
 "use strict";
-
-var PersonService = require("./PersonService");
 var $ = require("jquery");
-var baseUrl = "http://localhost:3000/api";
-init();
+var personService = require("./PersonService");
 
-function init(){
-	var personService = new PersonService();
+$(document).ready(function () {
+	GridView.init();
+});
 
-	//var jsonData = '[{"rank":"9","content":"Alon","UID":"5"},{"rank":"6","content":"Tala","UID":"6"}]';
-	
-	// personService.add(
-	// 	{id:2,
-	// 	firstName: "Ion",
-	// 	 lastName: "Vasile",
-	// 	 age : 25}, function(){	console.log("Added the person");
-	// 	});
+var GridView = {
+	init: function(){
+		personService = new personService();
+		personService.getAll($.proxy(this.renderPersons, this));
+		this.atachEvents();
+	},
+	renderPersons: function (persons) {
+		if (persons) {
+			$.map(persons, $.proxy(this.renderPerson, this));
+		}  
+	},
+	renderPerson: function (person) {
+		if ($('table tr[id=' + person.id + ']')){
+			$('table tr[id=' + person.id + ']').remove();
+		}
 
-	personService.populate();
-	// personService.deleteId();
+		var $row = $('<tr></tr>').attr({'id': person.id});
+		$row.append("<td><a href='javascript:void(0)' class='edit'>Edit      </a>"+
+			"<a href='javascript:void(0)' class='delete'>Delete</a></td>");
+		var columnsOrder = ['id', 'firstName', 'lastName', 'age'];
+		for(var key in columnsOrder) {
+		    $row.append(
+		    	$('<td></td>').attr({'class': columnsOrder[key]}).html(person[columnsOrder[key]])
+		    );
+		}
+		$('#records-table').append($row);
+	},
+	atachEvents: function () {
+		var $parent = $('table');
+		$('form').on('click', '.save', $.proxy(this.addElement, this));
+		$parent.on('click', '.edit', this.editElement);
+		$parent.on('click', '.delete', $.proxy(this.deleteElement, this));
+	},
+	addElement: function (ev) {
+		ev.preventDefault();
+		ev.stopPropagation();
+		var $form = $('form');
 
+		var newPerson = {
+			firstName: $form.find('.firstName').val(),
+			lastName: $form.find('.lastName').val(),
+			age: $form.find('.age').val(),
+			id: $form.find('.id').val()
+		};
 
-	// personService.editId(
-	// 	{id:1,
-	// 	firstName: "update",
-	// 	 lastName: "update",
-	// 	 age : 10}, function(){	console.log("Update id");
-	// 	});
+		if ($('table tr[id=' + $form.find('.id').val() + ']')){
+			personService.editId(newPerson, this.renderPerson);
+			$('form').find('.id').prop('disabled', false);
+			$('form').find('input:not(:submit)').val('');
+		} else {
+			personService.add(newPerson, this.renderPerson);
+		}		
+	},
+	editElement: function (ev) {
+		var $row = $(ev.target).closest('tr');
+		var $form = $('form');
 
-	// personService.getAll( function(data){ 
-	// 	 console.log(data);
-	// });
-
-}
+		$form.find('.id').val(parseInt($row.find('.id').html())).prop('disabled', true);
+		$form.find('.firstName').val($row.find('.firstName').html());
+		$form.find('.lastName').val($row.find('.lastName').html());
+		$form.find('.age').val(parseInt($row.find('.age').html()));
+	},
+	deleteElement: function (ev) {
+		var $row = $(ev.target).closest('tr');
+		var rowId = $row.find('.id').html();
+		personService.deleteId(rowId, this.removeDomElement);
+	},
+	removeDomElement: function(id){
+		$('table tr[id=' + id + ']').remove();
+	}
+};

@@ -7,30 +7,39 @@ function PersonService () {
  
 	this.add = function (data, callback){
 		$.ajax(baseUrl + "/people", {
-			method: "post",
-			data: data,
-			success: function(data) {
-				// callback(data);
-				console.log("added person");
+			method: "POST",
+			data: JSON.stringify(data),
+			success: function(person) {
+				callback(data);
+			},
+			error: function () {
+				alert('Something wen wrong. Please contact the administrator!');
 			}
 		});
 	};
 
-	this.deleteId = function (id){
-		$.ajax(baseUrl + "/people/" + id, {
-			method: "delete",
+	this.deleteId = function (id, callback){
+		$.ajax(baseUrl + "/people/" + parseInt(id), {
+			method: "DELETE",
 			success: function() {
-				console.log("deleted");
+				alert('Successfully deleted!');
+				callback(id);
+			},
+			error: function () {
+				alert('Something wen wrong. Please contact the administrator!');
 			}
 		});
 	};
 
-	this.editId = function (data){
+	this.editId = function (data, callback){
 		$.ajax(baseUrl + "/people/",{
 			method: "put",
 			data:data,
 			success: function() {
-				console.log("updated");
+				callback(data);
+			},
+			error: function () {
+				alert('Something wen wrong. Please contact the administrator!');
 			}
 		});
 	};
@@ -38,25 +47,14 @@ function PersonService () {
 	this.getAll = function(callback){
 		$.ajax(baseUrl + "/people", {
 			method: "get",
-			 
 			success: function(data) {
 				callback(data);
+			},
+			error: function () {
+				alert('Something wen wrong. Please contact the administrator!');
 			}
 		});
 	};
-	
-	this.populate = function (firstName){
-    $.ajax(baseUrl + "/people/" + firstName , {
-    	method : 'POST',
-    	success: function (response) {
-        	var trHTML = '';
-        	$.each(response, function (i, item) {
-            	trHTML += '<tr><td>' + item.firstName + '</td></tr>';
-        	});
-        	$('#records_table').append(trHTML);
-    
-}});
-};
 
 	//getAll
 

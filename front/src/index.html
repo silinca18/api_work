@@ -4,19 +4,39 @@
 	<meta charset="UTF-8">
 	<title> Api Homework </title>
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	
 </head>
-<body> 
-	
-	<table id="records_table" border='1'>
-    <tr>
-        <th>Id</th>
-        <th>FirstName</th>
-        <th>LastName</th>
-        <th>Age</th>
-    </tr>
+<body>
+	<form id="add-edit-person">
+		<ul>
+			<li>
+				<label for="id">ID:</label>
+				<input type="number" class="id"/>
+			</li>
+			<li>
+				<label for="firstName">First Name:</label>
+				<input type="text" class="firstName"/>
+			</li>
+			<li>
+				<label for="lastName">Last Name:</label>
+				<input type="text" class="lastName"/>
+			</li>
+			<li>
+				<label for="age">Age:</label>
+				<input type="number" class="age"/>
+			</li>
+			<li>
+				<input type="submit" value="Save" class='save' />
+			</li>
+		</ul>
+	</form>
+
+	<table id="records-table"> 
+		<td></td>
+		<th>ID</th>
+		<th>First Name</th>
+		<th>Last Name</th>
+		<th>Age</th>
 	</table>
- 
 
 	<script src="js/vendor.js"></script>
  	<script src="js/client.js"></script>
